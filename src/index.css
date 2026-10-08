@@ -1,0 +1,313 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════
+   一碗公道饭 · Apple 风格主题令牌
+   白底 + Apple 灰 + 黑字 + Apple 蓝点缀；大留白、精致圆角、微妙阴影。
+   全站只有一族字体：系统无衬线栈（见 tailwind.config.js）。
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%; /* #FFFFFF */
+    --surface: 240 11% 96%; /* #F5F5F7 Apple 灰 */
+    --foreground: 240 3% 12%; /* #1D1D1F */
+    --muted: 240 2% 44%; /* #6E6E73 */
+    --subtle: 240 2% 53%; /* #86868B */
+    --border: 240 1% 92%; /* #E8E8ED */
+    --accent: 210 100% 45%; /* #0071E3 */
+    --accent-dark: 210 100% 40%; /* #0066CC */
+    --radius: 16px;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family:
+      -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue",
+      "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* 标题与正文同族，靠字重与字距区分层级 */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: inherit;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+  }
+
+  p {
+    line-height: 1.7;
+  }
+
+  /* 用户既定排版规范：段落首行缩进 2em */
+  p.indent,
+  .prose-cn p {
+    text-indent: 2em;
+  }
+
+  ::selection {
+    background: hsl(var(--accent) / 0.18);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.18);
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* 键盘焦点：Apple 蓝色圆角描边 */
+  :focus-visible {
+    outline: 2px solid hsl(var(--accent));
+    outline-offset: 2px;
+  }
+
+  /* preflight 默认 placeholder 是冷灰 —— 必须用同级选择器覆盖，
+     否则 input::placeholder 的特异性会压过裸 ::placeholder。 */
+  input::placeholder,
+  textarea::placeholder,
+  ::placeholder {
+    color: hsl(var(--subtle));
+    opacity: 1;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   工具类
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* 竖排小字 */
+  .writing-vertical {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    letter-spacing: 0.2em;
+  }
+
+  /* hover-underline：默认收在右侧，悬停自左向右展开 */
+  .hover-underline {
+    position: relative;
+    display: inline-block;
+  }
+  .hover-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.12em;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .hover-underline:hover::after,
+  .group:hover .group-hover-underline::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   设计系统骨架（Apple）
+   新增区块请优先复用下列类名，避免逐行手写造成风格漂移。
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer components {
+  /* 容器：Apple 内容宽度 1120px，6/8 栅格边距 */
+  .container-content {
+    @apply mx-auto w-full max-w-shell px-6 md:px-8;
+  }
+
+  /* 区块节奏 */
+  .section {
+    @apply py-20 md:py-32;
+  }
+
+  /* Apple 眉标：小字、中等字重、灰色。不做全大写拉开字距。 */
+  .label {
+    @apply font-sans text-sm font-medium text-muted;
+  }
+
+  /* 按钮：Apple 胶囊 */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-sans text-[15px] font-medium transition-all duration-200;
+  }
+  .btn-primary {
+    @apply btn bg-accent text-white hover:bg-accent-dark active:scale-[0.98];
+  }
+  .btn-secondary {
+    @apply btn bg-surface text-foreground hover:bg-border active:scale-[0.98];
+  }
+  .btn-ink {
+    @apply btn bg-foreground text-background hover:opacity-90 active:scale-[0.98];
+  }
+  .btn-ghost {
+    @apply btn text-accent hover:bg-accent-soft;
+  }
+
+  /* 卡片：白底 + 精致圆角 + 微妙阴影 */
+  .card {
+    @apply rounded-2xl border border-border bg-background p-6 shadow-sm transition-shadow duration-300 hover:shadow-md;
+  }
+  .card-flat {
+    @apply rounded-2xl border border-border bg-surface p-6;
+  }
+
+  /* 输入框：Apple 圆角输入 */
+  .field {
+    @apply w-full rounded-xl border border-input bg-surface px-4 py-3.5 font-sans text-[15px] text-foreground outline-none transition-all duration-200 placeholder:text-subtle focus:border-accent focus:bg-background focus:ring-4 focus:ring-accent-soft;
+  }
+
+  /* 文字链接 */
+  .link {
+    @apply hover-underline font-sans text-accent transition-colors duration-200 hover:text-accent-dark;
+  }
+
+  /* 正文：行宽受控 + 舒适行距 */
+  .prose-cn {
+    @apply max-w-prose font-sans text-base leading-[1.75] text-muted md:text-[17px];
+  }
+  .prose-cn p {
+    text-indent: 2em;
+  }
+
+  /* ── 素材长卷布局（参照 legend 的双栏图文交替） ───────── */
+
+  /* 居中页头：眉标 + 大标题 + 导语 */
+  .page-intro {
+    @apply mx-auto max-w-3xl text-center;
+  }
+  .page-intro h2 {
+    @apply text-[clamp(2rem,4.6vw,3rem)] font-semibold leading-[1.12] text-foreground;
+  }
+
+  /* 章节：桌面两栏图文交替，移动端单栏。左右顺序由组件 flip 属性显式控制。 */
+  .journey-chapter {
+    @apply relative grid items-center gap-8 md:grid-cols-2 md:gap-12;
+  }
+
+  /* 图片容器：4:5 竖幅 + 圆角 + 悬停缓慢推近 */
+  .chapter-media {
+    @apply relative overflow-hidden rounded-2xl bg-surface shadow-md;
+    aspect-ratio: 4 / 5;
+  }
+  .chapter-media img {
+    @apply block h-full w-full object-cover transition-transform duration-700 ease-out;
+  }
+  .journey-chapter:hover .chapter-media img {
+    @apply scale-[1.04];
+  }
+
+  /* 章节号胶囊（图片左上角） */
+  .chapter-no {
+    @apply absolute left-3 top-3 rounded-full bg-foreground/85 px-3.5 py-1 text-sm font-semibold text-background backdrop-blur-sm;
+  }
+
+  /* 图注胶囊（图片底部，毛玻璃） */
+  .chapter-motif {
+    @apply absolute bottom-3 left-3 right-3 rounded-full bg-foreground/70 px-4 py-1.5 text-center text-xs font-medium text-background backdrop-blur-sm;
+  }
+
+  .chapter-kicker {
+    @apply text-sm font-semibold text-accent;
+  }
+  .chapter-body h3 {
+    @apply mt-1 text-[clamp(1.4rem,2.8vw,2rem)] font-semibold leading-[1.2] text-foreground;
+  }
+  .chapter-prose {
+    @apply mt-4 text-[15px] leading-[1.85] text-muted;
+  }
+
+  /* 引文块：左侧强调竖线 + 极浅底色 */
+  .chapter-quote {
+    @apply mt-5 rounded-r-xl border-l-4 border-accent bg-accent-soft py-3 pl-5 pr-4 text-[17px] font-medium leading-relaxed text-foreground;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   AI 生成内容公示标注（合规要求）—— Apple 胶囊标签
+   ═══════════════════════════════════════════════════════════════ */
+
+.ai-badge::after {
+  content: "AI 创作";
+  margin-left: 8px;
+  display: inline-block;
+  vertical-align: middle;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: hsl(var(--foreground) / 0.06);
+  color: hsl(var(--muted));
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   无障碍：动效降级
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  .journey-chapter:hover .chapter-media img,
+  .group:hover img {
+    transform: none !important;
+  }
+  .hover-underline::after,
+  .group:hover .group-hover-underline::after {
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@layer utilities {
+  .animate-none-motion {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
